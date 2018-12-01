@@ -5,7 +5,18 @@ long int solucion=x3(16bits)+x2(16bits)+x1(16bits)+x0(16bits)
 
 
 GA::GA(){
-
+	for (int i = 0; i < parent_size; i++){	//Initialization of parents and child
+		parent1[i]=0;
+		parent2[i]=0;
+	}
+	for (int j = 0; j < child_size; j++){
+		child[j]=0;
+	}
+	for (int k = 0; k < maxs_gens; k++){	//Initialization of chromosomes
+		srand( time( NULL ) );
+		unsigned long long int ran1 = rand();
+		chromosomes[k] = ran1*ran1*ran1*ran1;
+	}
 }
 
 unsigned long long int GA::reproduction(){
@@ -15,11 +26,11 @@ unsigned long long int GA::mutation(){
 
 }
 void GA::crossover(){
-	double RandNum = distribution(generator);
+	double RandNum = distribution(generator);//Generate the partition of parent1 for the child
 	srand( time( NULL ) );
-	int point = 1 + (rand() % 30);
+	int point = 10 + (rand() % 30);// Parents are of length 30
 
-if (RandNum>=p_crossover){
+if (RandNum>=p_crossover){	//If the mutation rate is too small doesnt change
 	child=parent1;
 	return;
 }
@@ -33,50 +44,39 @@ for (int j = point; j < 40; j++){
 
 }
 void GA::selection(int *Fo, unsigned long long int solu){
-	double min=0, indexes[]={0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}, aux=0.0;
-	for (int i = 0; i < maxs_gens; i++)
-	{
+	double min=10000.0;
+	for (int i = 0; i < maxs_gens; i++){
 		Error(Fo, chromosomes[i], i);
 	}
 
-	for (int j = 0; j < maxs_gens; j++)
-	{
+	for (int j = 0; j < maxs_gens; j++){	//Selection of elements with smaller errors
 	 	if (Err[j]<min){
-	 			min=Err[j];
-	 			
-	 			for (int k = 29; k =1; k--)
-	 			{
-	 				indexes[k]=indexes[k-1];
-	 			}
-	 			indexes[0]=min;
-	 		}	
-	}
-	if (min<=1)
-	{
-		/* code */
+	 		min=Err[j];
+ 			for (int k = 29; k >=1; k--){	//The value in the parents is updated
+ 				parent2[k]=parent2[k-1];
+ 			}
+	 		parent2[0]=parent1[29];
+ 			for (int h = 29; h >=1; h--){
+			parent1[h]=parent1[h-1];
+ 			}
+ 			parent1[0]=min; 			
+ 		}	
 	}
 }
 
-unsigned long long int GA::Error(int *Fo, unsigned long long int solu, int index){
-	unsigned long int aux1 = (unsigned long long int)(solu >> 32);
+void GA::Error(int *Fo, unsigned long long int solu, int index){
+	unsigned long int aux1 = (unsigned long long int)(solu >> 32);	//Separation of bits for the coeficients
 	unsigned long int aux2 = solu & 0xFFFFFFFF;
-	unsigned short x3 = (unsigned long long int)(aux1 >> 16);
-	unsigned short x2 = aux1 & (unsigned long long int)(~0U) >> 16;
-	unsigned short x1 = (unsigned long long int)(aux2 >> 16);
-	unsigned short x0 = aux2 & (unsigned long long int)(~0U) >> 16;
+	unsigned short x3 = (unsigned long long int)(aux1 >> 16);		//Bits for the coeficient x3
+	unsigned short x2 = aux1 & (unsigned long long int)(~0U) >> 16; //Bits for the coeficient x2
+	unsigned short x1 = (unsigned long long int)(aux2 >> 16);		//Bits for the coeficient x1
+	unsigned short x0 = aux2 & (unsigned long long int)(~0U) >> 16; //Bits for the coeficient x0
 	int Dif=0, Suma=0;
 
-	for (int i = 0; i < maxs_gens; i++)
+	for (int i = 0; i < maxs_gens; i++)								//Error evaluation
 	{
-		Suma +=abs(Fo[i]-Funct(i, x0, x1, x2, x3));
+		Suma +=abs(Fo[i]-Funct(i, x0, x1, x2, x3));					
 		
 	}
 	Err[index]=Suma/maxs_gens;
-}
-
-GA::~GA(){
-	if (this->chromosomes != NULL) delete [] this->chromosomes;
-		if (this->parent1 != NULL) delete [] this->parent1;
-		if (this->parent2 != NULL) delete [] this->parent2;
-	if (this->child != NULL) delete [] this->child; 
 }

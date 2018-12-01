@@ -9,7 +9,7 @@
 
 #define num_bits 64
 #define maxs_gens 100
-#define paren_size 30
+#define parent_size 30
 #define child_size  40
 #define p_crossover 0.98
 #define p_mutation 1/64
@@ -22,7 +22,12 @@ std::uniform_real_distribution<double> distribution(0.0,1.0);
 class GA{
 public:
 	GA();
-	~GA();
+	~GA(){
+	if (this->chromosomes != NULL) delete [] this->chromosomes;
+		if (this->parent1 != NULL) delete [] this->parent1;
+		if (this->parent2 != NULL) delete [] this->parent2;
+	if (this->child != NULL) delete [] this->child; 
+	}
 	unsigned long long int reproduction();
 	unsigned long long int mutation();
 	unsigned long long int crossover();

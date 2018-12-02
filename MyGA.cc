@@ -21,25 +21,31 @@ GA::GA(){
 
 unsigned long long int GA::reproduction(){
 
+
 }
 unsigned long long int GA::mutation(){
-
+	double rate = 1.0/child_size;		//mutation of each bit
+	double r2 =0.0;
+	for (int i = 0; i < child_size; i++){
+		r2 = distribution(generator);
+		((r1<rate)? ~(valor&(1<<i)): (valor&(1<<i)));	
+	}
 }
 void GA::crossover(){
 	double RandNum = distribution(generator);//Generate the partition of parent1 for the child
 	srand( time( NULL ) );
 	int point = 10 + (rand() % 30);// Parents are of length 30
 
-if (RandNum>=p_crossover){	//If the mutation rate is too small doesnt change
-	child=parent1;
-	return;
-}
-for (int i = 0; i < point; i++){
-	child[i] = parent1[i];
-}
-for (int j = point; j < 40; j++){
-	child[j] = parent2[j];
-}
+	if (RandNum>=p_crossover){	//If the mutation rate is too small doesnt change
+		child=parent1;
+		return;
+	}
+	for (int i = 0; i < point; i++){
+		child[i] = parent1[i];
+	}
+	for (int j = point; j < 40; j++){
+		child[j] = parent2[j];
+	}
 
 
 }

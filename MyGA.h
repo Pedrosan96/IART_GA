@@ -6,6 +6,10 @@
 #include<random>
 #include<ctime>
 #include<cstdlib>
+#include<fstream>
+#include<string>
+#include<vector>
+
 
 #define num_bits 64
 #define maxs_gens 100
@@ -28,16 +32,16 @@ public:
 		if (this->parent2 != NULL) delete [] this->parent2;
 	if (this->child != NULL) delete [] this->child; 
 	}
-	unsigned long long int reproduction();
-	unsigned long long int mutation();
-	unsigned long long int crossover();
-	unsigned long long int selection();
-	unsigned long long int Error(int *Fo, unsigned long long int solu, int index);
+	void reproduction(int *Fo);
+	void mutation(unsigned long long int valor);
+	void crossover();
+	void selection(int *Fo, unsigned long long int solu);
+	void Error(int *Fo, unsigned long long int solu, int index);
 	
 private:
 	unsigned long long int *chromosomes = new unsigned long long int[maxs_gens];
-	unsigned long long int *parent1 = new unsigned long long int[paren_size];
-	unsigned long long int *parent2 = new unsigned long long int[paren_size];
+	unsigned long long int *parent1 = new unsigned long long int[parent_size];
+	unsigned long long int *parent2 = new unsigned long long int[parent_size];
 	unsigned long long int *child = new unsigned long long int[child_size];
 	double *Err = new double[maxs_gens];
 };

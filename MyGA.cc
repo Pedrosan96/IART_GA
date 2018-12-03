@@ -19,16 +19,23 @@ GA::GA(){
 	}
 }
 
-unsigned long long int GA::reproduction(){
-
+void GA::reproduction(int *Fo){
+	for (int i = 0; i < maxs_gens; i++){
+	 	selection(Fo, chromosomes[i]);
+	} 
+	crossover();
+	for (int j = 0; j < child_size; j++)
+	{
+		mutation(child[j]);
+	}
 
 }
-unsigned long long int GA::mutation(){
+void GA::mutation(unsigned long long int valor){
 	double rate = 1.0/child_size;		//mutation of each bit
 	double r2 =0.0;
-	for (int i = 0; i < child_size; i++){
+	for (int i = 1; i <= num_bits; i++){
 		r2 = distribution(generator);
-		((r1<rate)? ~(valor&(1<<i)): (valor&(1<<i)));	
+		((r2<rate)? ~(valor&(1<<i)): (valor&(1<<i)));	
 	}
 }
 void GA::crossover(){

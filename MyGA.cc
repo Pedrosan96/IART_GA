@@ -5,6 +5,7 @@ long int solucion=x3(16bits)+x2(16bits)+x1(16bits)+x0(16bits)
 
 
 GA::GA(){
+	iter=0;
 	for (int i = 0; i < parent_size; i++){	//Initialization of parents and child
 		parent1[i]=0;
 		parent2[i]=0;
@@ -19,24 +20,32 @@ GA::GA(){
 	}
 }
 
-void GA::reproduction(int *Fo){
+bool GA::reproduction(std::vector<unsigned long> Fo){
+	bool flag;
 	for (int i = 0; i < maxs_gens; i++){
-	 	selection(Fo, chromosomes[i]);
+		flag=Error(Fo, chromosomes[i], i);
+		if (!flag){
+			return flag;
+		}
 	} 
+	 	selection();
+	 	iter++;			//adding an iteration
+
 	crossover();
-	for (int j = 0; j < child_size; j++)
-	{
-		mutation(child[j]);
-	}
+	mutation();
+	
 
 }
-void GA::mutation(unsigned long long int valor){
+void GA::mutation(){
 	double rate = 1.0/child_size;		//mutation of each bit
 	double r2 =0.0;
-	for (int i = 1; i <= num_bits; i++){
+	for (int j = 0; j < child_size; j++){
+		for (int i = 1; i <= num_bits; i++){
 		r2 = distribution(generator);
-		((r2<rate)? ~(valor&(1<<i)): (valor&(1<<i)));	
+		((r2<rate)? ~(child[j]&(1<<i)): (child[j]&(1<<i)));	
+		}
 	}
+	
 }
 void GA::crossover(){
 	double RandNum = distribution(generator);//Generate the partition of parent1 for the child
@@ -44,9 +53,15 @@ void GA::crossover(){
 	int point = 10 + (rand() % 30);// Parents are of length 30
 
 	if (RandNum>=p_crossover){	//If the mutation rate is too small doesnt change
-		child=parent1;
+		for (int i = 0; i < 30; i++){
+			child[i] = parent1[i];
+		}
+		for (int j = 30; j < 40; j++){
+			child[j] = parent2[j-30];
+		}
 		return;
 	}
+
 	for (int i = 0; i < point; i++){
 		child[i] = parent1[i];
 	}
@@ -56,12 +71,9 @@ void GA::crossover(){
 
 
 }
-void GA::selection(int *Fo, unsigned long long int solu){
-	double min=10000.0;
-	for (int i = 0; i < maxs_gens; i++){
-		Error(Fo, chromosomes[i], i);
-	}
-
+void GA::selection(){
+	long double min=10e10;
+	
 	for (int j = 0; j < maxs_gens; j++){	//Selection of elements with smaller errors
 	 	if (Err[j]<min){
 	 		min=Err[j];
@@ -75,9 +87,10 @@ void GA::selection(int *Fo, unsigned long long int solu){
  			parent1[0]=min; 			
  		}	
 	}
+	return;
 }
 
-void GA::Error(int *Fo, unsigned long long int solu, int index){
+bool GA::Error(std::vector<unsigned long> Fo, unsigned long long int solu, int index){
 	unsigned long int aux1 = (unsigned long long int)(solu >> 32);	//Separation of bits for the coeficients
 	unsigned long int aux2 = solu & 0xFFFFFFFF;
 	unsigned short x3 = (unsigned long long int)(aux1 >> 16);		//Bits for the coeficient x3
@@ -92,4 +105,15 @@ void GA::Error(int *Fo, unsigned long long int solu, int index){
 		
 	}
 	Err[index]=Suma/maxs_gens;
+	if ((Err[index]>0.01) && iter<1000)		//Condition to continue
+	{
+		std::cout<<"////////////////////////////////////////"<<std::endl;
+		std::cout<<"Iter: "<<iter<<"Error: "<<Err[index]<<std::endl;
+	 	std::cout<<"Valores: X3="<<x3<<" X2="<<x2<<" X1="<<x1<<" X0="<<x0<<std::endl;
+	 	return true;
+	}
+		std::cout<<"////////////////////////////////////////"<<std::endl;
+		std::cout<<"Iter: "<<iter<<"Error: "<<Err[index]<<std::endl;
+	 	std::cout<<"Valores: X3="<<x3<<" X2="<<x2<<" X1="<<x1<<" X0="<<x0<<std::endl;
+	return false;
 }

@@ -32,11 +32,11 @@ public:
 		if (this->parent2 != NULL) delete [] this->parent2;
 	if (this->child != NULL) delete [] this->child; 
 	}
-	void reproduction(int *Fo);
-	void mutation(unsigned long long int valor);
+	bool reproduction(std::vector<unsigned long> Fo);
+	void mutation();
 	void crossover();
-	void selection(int *Fo, unsigned long long int solu);
-	void Error(int *Fo, unsigned long long int solu, int index);
+	void selection();
+	bool Error(std::vector<unsigned long> Fo, unsigned long long int solu, int index);
 	
 private:
 	unsigned long long int *chromosomes = new unsigned long long int[maxs_gens];
@@ -44,6 +44,7 @@ private:
 	unsigned long long int *parent2 = new unsigned long long int[parent_size];
 	unsigned long long int *child = new unsigned long long int[child_size];
 	double *Err = new double[maxs_gens];
+	int iter;
 };
 
 #endif

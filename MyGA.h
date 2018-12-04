@@ -43,7 +43,7 @@ private:
 	unsigned long long int *parent1 = new unsigned long long int[parent_size];
 	unsigned long long int *parent2 = new unsigned long long int[parent_size];
 	unsigned long long int *child = new unsigned long long int[child_size];
-	double *Err = new double[maxs_gens];
+	long double *Err = new long double[maxs_gens];
 	int iter;
 };
 

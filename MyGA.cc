@@ -97,23 +97,23 @@ bool GA::Error(std::vector<unsigned long> Fo, unsigned long long int solu, int i
 	unsigned short x2 = aux1 & (unsigned long long int)(~0U) >> 16; //Bits for the coeficient x2
 	unsigned short x1 = (unsigned long long int)(aux2 >> 16);		//Bits for the coeficient x1
 	unsigned short x0 = aux2 & (unsigned long long int)(~0U) >> 16; //Bits for the coeficient x0
-	int Dif=0, Suma=0;
+	long double Dif=0, Suma=0;
 
 	for (int i = 0; i < maxs_gens; i++)								//Error evaluation
 	{
-		Suma +=abs(Fo[i]-Funct(i, x0, x1, x2, x3));					
-		
+		Suma +=labs(Fo[i]-Funct(i, x0, x1, x2, x3));					
+		Suma/=maxs_gens;
 	}
-	Err[index]=Suma/maxs_gens;
+	Err[index]=Suma;
 	if ((Err[index]>0.01) && iter<1000)		//Condition to continue
 	{
 		std::cout<<"////////////////////////////////////////"<<std::endl;
-		std::cout<<"Iter: "<<iter<<"Error: "<<Err[index]<<std::endl;
+		std::cout<<"Iter: "<<iter<<" Error: "<<Err[index]<<std::endl;
 	 	std::cout<<"Valores: X3="<<x3<<" X2="<<x2<<" X1="<<x1<<" X0="<<x0<<std::endl;
 	 	return true;
 	}
 		std::cout<<"////////////////////////////////////////"<<std::endl;
-		std::cout<<"Iter: "<<iter<<"Error: "<<Err[index]<<std::endl;
+		std::cout<<"Iter: "<<iter<<" Error: "<<Err[index]<<std::endl;
 	 	std::cout<<"Valores: X3="<<x3<<" X2="<<x2<<" X1="<<x1<<" X0="<<x0<<std::endl;
 	return false;
 }
